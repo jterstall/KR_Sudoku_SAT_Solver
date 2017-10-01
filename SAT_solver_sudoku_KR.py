@@ -27,7 +27,7 @@ def test_pair(sudoku, N):
     print("Sudoku to solve pair:")
     print(sudoku)
     print("Solved sudoku pair:")
-    solved_sudoku = solver_pair.solver_efficient(sudoku, N, recursion)
+    solved_sudoku = solver_pair.solver_pair(sudoku, N)
     print(solved_sudoku)
     print("Is sudoku solved correctly?:")
     print(check_sudoku.validate_sudoku(solved_sudoku, N))
@@ -36,9 +36,9 @@ def main():
     # Sudoku length
     N = 9
     sudoku = np.load("data\Easy\sudoku-Easy-0.npy")
-    test_naive(sudoku, N)
-    test_efficient(sudoku, N, False)
-    # test_pair(sudoku, N)
+    # test_naive(sudoku, N)
+    # test_efficient(sudoku, N, False)
+    test_pair(sudoku, N)
     
 if __name__ == '__main__':
     main()

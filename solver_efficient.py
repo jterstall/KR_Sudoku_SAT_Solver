@@ -123,7 +123,7 @@ def block_cell_encoding_efficient(encodings, filled_in, N):
 def encoding_efficient(sudoku, N):
     encodings = []
     encodings, filled_in = filled_in_encoding_efficient(encodings, sudoku, N)
-    encodings, easy_pickings = ind_cell_encoding_efficient(encodings, filled_in, N)
+    encodings, _ = ind_cell_encoding_efficient(encodings, filled_in, N)
     encodings = row_cell_encoding_efficient(encodings, filled_in, N)
     encodings = col_cell_encoding_efficient(encodings, filled_in, N)
     encodings = block_cell_encoding_efficient(encodings, filled_in, N)
