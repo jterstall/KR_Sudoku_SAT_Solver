@@ -4,6 +4,19 @@ import numpy as np
 def transform(cell_row, cell_col, digit, N):
     return int(cell_row*N*N + cell_col*N + digit)
 
+def reverse_encode_solo(number, N):
+    number, d = divmod(number, N)
+    return d
+
+def reverse_encode_pair(numbers, N):
+    real_digits = []
+    for number in numbers:
+        number, d = divmod(number, N)
+        if d == 0:
+            d = 9
+        real_digits.append(d)
+    return(real_digits)
+
 def reverse_encoding(solved, N):
     if isinstance(solved, str):
         return "Sudoku could not be solved: %s" % solved
