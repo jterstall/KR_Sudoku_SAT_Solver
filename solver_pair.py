@@ -17,17 +17,17 @@ def pair_row_col_encoding(encodings, N):
                             if len(encodings[j]) >= 2:
                                 if encodings[j][0] > 0:
                                     possible_values_counter += 1
-                                    print(j)
+                                    # print(j)
                                     if len(encodings[j]) == 2:
                                         reversed_list_matching = sudoku_encoding.reverse_encode_pair(encodings[j], N)
                                         if reversed_list == reversed_list_matching:
                                             for k in range(i+1, j-1):
                                                 for number in encodings[k]:
-                                                    print(encodings[k])
+                                                    # print(encodings[k])
                                                     matching_number = sudoku_encoding.reverse_encode_solo(number, N)
                                                     if matching_number == reversed_list[0] or matching_number == reversed_list[1]:
                                                         encodings[k].remove(number)
-                                                        print("removed")
+                                                        # print("removed")
                                             values_list_counter = 9 - possible_values_counter
                                             m = j
                                             while True:
@@ -41,7 +41,7 @@ def pair_row_col_encoding(encodings, N):
                                                             matching_number = sudoku_encoding.reverse_encode_solo(number, N)
                                                             if matching_number == reversed_list[0] or matching_number == reversed_list[1]:
                                                                 encodings[m].remove(number)
-                                                                print("removed")
+                                                                # print("removed")
                                                     if values_list_counter == 9:
                                                         break
                             if possible_values_counter == 9:
