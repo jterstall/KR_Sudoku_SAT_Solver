@@ -50,10 +50,14 @@ def row_cell_encoding_efficient(encodings, filled_in, N):
             row_contains_digit = check_row_for_digit(i, d, filled_in, N)
             if not row_contains_digit:
                 for j in range(N):
-                    d_transform = sudoku_encoding.transform(i, j, d, N)                
-                    all_possible_values.append(d_transform)
-                    for other_j in range(j+1, N):
-                        encodings.append([-d_transform, -sudoku_encoding.transform(i, other_j, d, N)])
+                    col_contains_digit = check_col_for_digit(j, d, filled_in, N)
+                    if not col_contains_digit:
+                        d_transform = sudoku_encoding.transform(i, j, d, N)                
+                        all_possible_values.append(d_transform)
+                        for other_j in range(j+1, N):
+                            other_j_transform = sudoku_encoding.transform(i, other_j, d, N)
+                            if not other_j_transform in filled_in:
+                                encodings.append([-d_transform, -other_j_transform])
                 encodings.append(all_possible_values)
     return encodings
 
@@ -70,10 +74,14 @@ def col_cell_encoding_efficient(encodings, filled_in, N):
             col_contains_digit = check_col_for_digit(j, d, filled_in, N)
             if not col_contains_digit:
                 for i in range(N):
-                    d_transform = sudoku_encoding.transform(i, j, d, N)               
-                    all_possible_values.append(d_transform)
-                    for other_i in range(i+1, N):
-                        encodings.append([-d_transform, -sudoku_encoding.transform(other_i, j, d, N)])
+                    row_contains_digit = check_row_for_digit(i, d, filled_in, N)
+                    if not row_contains_digit:
+                        d_transform = sudoku_encoding.transform(i, j, d, N)               
+                        all_possible_values.append(d_transform)
+                        for other_i in range(i+1, N):
+                            other_i_transform = sudoku_encoding.transform(other_i, j, d, N)
+                            if not other_i_transform in filled_in:
+                                encodings.append([-d_transform, -other_i_transform])
                 encodings.append(all_possible_values)
     return encodings
 
