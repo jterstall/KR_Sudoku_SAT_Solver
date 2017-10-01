@@ -1,19 +1,26 @@
 import numpy as np
 import solver_efficient
 import solver_naive
+import check_sudoku
 
 def test_naive(sudoku, N):
     print("Sudoku to solve naive:")
     print(sudoku)
     print("Solved sudoku naive:")
-    print(solver_naive.solver(sudoku, N))
+    solved_sudoku = solver_naive.solver(sudoku, N)
+    print(solved_sudoku)
+    print("Is sudoku solved correctly?:")
+    print(check_sudoku.validate_sudoku(solved_sudoku))
 
 # TODO: paper noemen?
 def test_efficient(sudoku, N):
     print("Sudoku to solve efficient:")
     print(sudoku)
     print("Solved sudoku efficient:")
-    print(solver_efficient.solver_efficient(sudoku, N))
+    solved_sudoku = solver_efficient.solver_efficient(sudoku, N)
+    print(solved_sudoku)
+    print("Is sudoku solved correctly?:")
+    print(check_sudoku.validate_sudoku(solved_sudoku))
 
 def main():
     # Sudoku length
