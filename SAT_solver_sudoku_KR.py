@@ -10,25 +10,24 @@ def test_naive(sudoku, N):
     solved_sudoku = solver_naive.solver(sudoku, N)
     print(solved_sudoku)
     print("Is sudoku solved correctly?:")
-    print(check_sudoku.validate_sudoku(solved_sudoku))
+    print(check_sudoku.validate_sudoku(solved_sudoku, N))
 
 # TODO: paper noemen?
-def test_efficient(sudoku, N):
+def test_efficient(sudoku, N, recursion):
     print("Sudoku to solve efficient:")
     print(sudoku)
     print("Solved sudoku efficient:")
-    solved_sudoku = solver_efficient.solver_efficient(sudoku, N)
+    solved_sudoku = solver_efficient.solver_efficient(sudoku, N, recursion)
     print(solved_sudoku)
     print("Is sudoku solved correctly?:")
-    print(check_sudoku.validate_sudoku(solved_sudoku))
+    print(check_sudoku.validate_sudoku(solved_sudoku, N))
 
 def main():
     # Sudoku length
     N = 9
     sudoku = np.load("data\Easy\sudoku-Easy-0.npy")
     test_naive(sudoku, N)
-    test_efficient(sudoku, N)
+    test_efficient(sudoku, N, False)
     
-# TODO: Volgens mij kan je nog meer clauses skippen door in de clauses van andere digits ook nog de al ingevulde te filteren
 if __name__ == '__main__':
     main()

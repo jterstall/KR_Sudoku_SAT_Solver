@@ -23,6 +23,7 @@ def check_cell_filled_in(row, col, filled_in, N):
     return False
 
 def ind_cell_encoding_efficient(encodings, filled_in, N):
+    easy_pickings = False
     for i in range(N):
         for j in range(N):
             all_possible_values = []
@@ -36,11 +37,13 @@ def ind_cell_encoding_efficient(encodings, filled_in, N):
                     if not any((row_contains_digit, col_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)
                         all_possible_values.append(d_transform)
+                if len(all_possible_values) == 1:
+                    easy_pickings = True
                 encodings.append(all_possible_values)
                 for k in range(len(all_possible_values)):
                     for l in range(k+1, len(all_possible_values)):
                         encodings.append([-all_possible_values[k], -all_possible_values[l]])
-    return encodings
+    return encodings, easy_pickings
 
 def check_row_for_digit(row, d, filled_in, N):
     for col in range(N):
@@ -60,7 +63,6 @@ def row_cell_encoding_efficient(encodings, filled_in, N):
                     if not any((col_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)   
                         all_possible_values.append(d_transform) 
-                encodings.append(all_possible_values)
                 for j in range(len(all_possible_values)):
                     for k in range(j+1, len(all_possible_values)):
                         encodings.append([-all_possible_values[j], -all_possible_values[k]])
@@ -84,7 +86,6 @@ def col_cell_encoding_efficient(encodings, filled_in, N):
                     if not any((row_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)               
                         all_possible_values.append(d_transform)
-                encodings.append(all_possible_values)
                 for i in range(len(all_possible_values)):
                     for k in range(i+1, len(all_possible_values)):
                         encodings.append([-all_possible_values[i], -all_possible_values[k]])
@@ -113,7 +114,6 @@ def block_cell_encoding_efficient(encodings, filled_in, N):
                             if not any((row_contains_digit, col_contains_digit)):
                                 d_transform = sudoku_encoding.transform(i+k, j+l, d, N)
                                 all_possible_values.append(d_transform)
-                    encodings.append(all_possible_values) 
                     for k in range(len(all_possible_values)):
                         for l in range(k+1, len(all_possible_values)):
                             encodings.append([-all_possible_values[k], -all_possible_values[l]])
@@ -123,14 +123,34 @@ def block_cell_encoding_efficient(encodings, filled_in, N):
 def encoding_efficient(sudoku, N):
     encodings = []
     encodings, filled_in = filled_in_encoding_efficient(encodings, sudoku, N)
-    encodings = ind_cell_encoding_efficient(encodings, filled_in, N)
+    encodings, easy_pickings = ind_cell_encoding_efficient(encodings, filled_in, N)
     encodings = row_cell_encoding_efficient(encodings, filled_in, N)
     encodings = col_cell_encoding_efficient(encodings, filled_in, N)
     encodings = block_cell_encoding_efficient(encodings, filled_in, N)
     return encodings
 
-def solver_efficient(sudoku, N):
-    encodings = encoding_efficient(sudoku, N)
+# Don't add clauses if a cell that is filled in affects it.
+def encoding_efficient_recursion(sudoku, N):
+    easy_pickings = True
+    while(easy_pickings):
+        encodings = []
+        encodings, filled_in = filled_in_encoding_efficient(encodings, sudoku, N)
+        encodings, easy_pickings = ind_cell_encoding_efficient(encodings, filled_in, N)
+        new_sudoku = []
+        for mylist in encodings:
+            if len(mylist) == 1:
+                new_sudoku.append(mylist[0])
+        sudoku = sudoku_encoding.reverse_encoding(new_sudoku, N)
+    encodings = row_cell_encoding_efficient(encodings, filled_in, N)
+    encodings = col_cell_encoding_efficient(encodings, filled_in, N)
+    encodings = block_cell_encoding_efficient(encodings, filled_in, N)
+    return encodings
+
+def solver_efficient(sudoku, N, recursion):
+    if recursion:
+        encodings = encoding_efficient_recursion(sudoku, N)
+    else:
+        encodings = encoding_efficient(sudoku, N)
     print("Encoding length efficient: {0} clauses".format(len(encodings)))
     solved = pycosat.solve(encodings)
     return sudoku_encoding.reverse_encoding(solved, N)
