@@ -35,10 +35,11 @@ def ind_cell_encoding_efficient(encodings, filled_in, N):
                     block_contains_digit = check_block_for_digit(i, j, d, filled_in, N)
                     if not any((row_contains_digit, col_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)
-                        for other_d in range(d+1, 10):
-                            other_d_transform = sudoku_encoding.transform(i, j, other_d, N)
-                            if other_d_transform not in filled_in:
-                                encodings.append([-d_transform, -other_d_transform])
+                        all_possible_values.append(d_transform)
+                encodings.append(all_possible_values)
+                for k in range(len(all_possible_values)):
+                    for l in range(k+1, len(all_possible_values)):
+                        encodings.append([-all_possible_values[k], -all_possible_values[l]])
     return encodings
 
 def check_row_for_digit(row, d, filled_in, N):
@@ -59,11 +60,10 @@ def row_cell_encoding_efficient(encodings, filled_in, N):
                     if not any((col_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)   
                         all_possible_values.append(d_transform) 
-                        for other_j in range(j+1, N):
-                            other_j_transform = sudoku_encoding.transform(i, other_j, d, N)
-                            if other_j_transform not in filled_in:
-                                encodings.append([-d_transform, -other_j_transform])
                 encodings.append(all_possible_values)
+                for j in range(len(all_possible_values)):
+                    for k in range(j+1, len(all_possible_values)):
+                        encodings.append([-all_possible_values[j], -all_possible_values[k]])
     return encodings
 
 def check_col_for_digit(col, d, filled_in, N):
@@ -84,11 +84,10 @@ def col_cell_encoding_efficient(encodings, filled_in, N):
                     if not any((row_contains_digit, block_contains_digit)):
                         d_transform = sudoku_encoding.transform(i, j, d, N)               
                         all_possible_values.append(d_transform)
-                        for other_i in range(i+1, N):
-                            other_i_transform = sudoku_encoding.transform(other_i, j, d, N)
-                            if other_i_transform not in filled_in:
-                                encodings.append([-d_transform, -other_i_transform])
                 encodings.append(all_possible_values)
+                for i in range(len(all_possible_values)):
+                    for k in range(i+1, len(all_possible_values)):
+                        encodings.append([-all_possible_values[i], -all_possible_values[k]])
     return encodings
 
 def check_block_for_digit(i, j, d, filled_in, N):
@@ -114,11 +113,10 @@ def block_cell_encoding_efficient(encodings, filled_in, N):
                             if not any((row_contains_digit, col_contains_digit)):
                                 d_transform = sudoku_encoding.transform(i+k, j+l, d, N)
                                 all_possible_values.append(d_transform)
-                                for other_d in range(d+1, 10):
-                                    other_d_transform = sudoku_encoding.transform(i+k, j+l, other_d, N)
-                                    if other_d_transform not in filled_in:
-                                        encodings.append([-d_transform, -sudoku_encoding.transform(i+k, j+l, other_d, N)])  
-                    encodings.append(all_possible_values)
+                    encodings.append(all_possible_values) 
+                    for k in range(len(all_possible_values)):
+                        for l in range(k+1, len(all_possible_values)):
+                            encodings.append([-all_possible_values[k], -all_possible_values[l]])
     return encodings
 
 # Don't add clauses if a cell that is filled in affects it.
