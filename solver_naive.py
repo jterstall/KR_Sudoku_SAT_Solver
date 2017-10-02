@@ -47,9 +47,10 @@ def block_cell_encoding(encodings, N):
                     for l in range(0, 3):
                         d_transform = sudoku_encoding.transform(i+k, j+l, d, N)
                         all_possible_values.append(d_transform)
-                        for other_d in range(d+1, 10):
-                            encodings.append([-d_transform, -sudoku_encoding.transform(i+k, j+l, other_d, N)])  
                 encodings.append(all_possible_values)
+                for k in range(len(all_possible_values)):
+                    for l in range(k+1, len(all_possible_values)):
+                        encodings.append([-all_possible_values[k], -all_possible_values[l]])
     return encodings
                 
 def filled_in_encoding(encodings, sudoku, N):

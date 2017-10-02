@@ -82,10 +82,10 @@ def test_sudokus_solving_only(sudoku_number, N, difficulty):
 	end_eff = time.time()
 
 	# Efficient encoding with recursion
-	eff_encoding_recursive = solver_custom.encoding_custom_recursion(sudoku, N)
-	start_eff_recursive = time.time()
-	solved_eff_recursive = pycosat.solve(eff_encoding_recursive)
-	end_eff_recursive = time.time()
+	custom_encoding_recursive = solver_custom.encoding_custom_recursion(sudoku, N)
+	start_custom_recursive = time.time()
+	solved_custom_recursive = pycosat.solve(custom_encoding_recursive)
+	end_custom_recursive = time.time()
 
 	# Minimal encoding
 	minimal_encoding = solver_minimal.encoding_minimal(sudoku, N)
@@ -101,21 +101,20 @@ def test_sudokus_solving_only(sudoku_number, N, difficulty):
 
 	time_naive = (end_naive - start_naive)
 	time_eff = (end_eff - start_eff)
-	time_eff_recursive = (end_eff_recursive - start_eff_recursive)
 	time_minimal = (end_minimal - start_minimal)
 	time_custom = (end_custom - start_custom)
+	time_custom_recursive = (end_custom_recursive - start_custom_recursive)
 
 	print("Solved correctly naive: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_naive, N), N)))
 	print("Solved correctly efficient: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff, N), N)))
-	print("Solved correctly efficient with recursion: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff_recursive, N), N)))
 	print("Solved correctly minimal: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_minimal, N), N)))
 	print("Solved correctly custom: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_custom, N), N)))
-
+	print("Solved correctly custom with recursion: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_custom_recursive, N), N)))
 	print("\n")
 
 	# Time for naive and efficient
 	# time_naive, time_eff = test_current_sudoku(eff_encoding, naive_encoding, sudoku, N)
-	return time_naive, time_eff, time_eff_recursive, time_minimal, time_custom
+	return time_naive, time_eff, time_minimal, time_custom, time_custom_recursive
  
 def test_encoding(N):
 	easy_time = [0, 0, 0, 0, 0]
