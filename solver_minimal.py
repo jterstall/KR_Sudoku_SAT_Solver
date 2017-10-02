@@ -1,19 +1,17 @@
 import pycosat
 import sudoku_encoding
 
-def ind_cell_encoding_efficient(encodings, N):
+def ind_cell_encoding_minimal(encodings, N):
     for i in range(N):
         for j in range(N):
             all_possible_values = []
             for d in range(1, 10):
                 d_transform = sudoku_encoding.transform(i, j, d, N)
                 all_possible_values.append(d_transform)
-                for other_d in range(d+1, 10):
-                    encodings.append([-d_transform, -sudoku_encoding.transform(i, j, other_d, N)])
             encodings.append(all_possible_values)
     return encodings
 
-def row_cell_encoding_efficient(encodings, N):
+def row_cell_encoding_minimal(encodings, N):
     for i in range(N):
         for d in range(1, 10):
             all_possible_values = []
@@ -23,7 +21,7 @@ def row_cell_encoding_efficient(encodings, N):
                     encodings.append([-d_transform, -sudoku_encoding.transform(i, other_j, d, N)])
     return encodings
     
-def col_cell_encoding_efficient(encodings, N):
+def col_cell_encoding_minimal(encodings, N):
     for j in range(N):
         for d in range(1, 10):
             all_possible_values = []
@@ -34,7 +32,7 @@ def col_cell_encoding_efficient(encodings, N):
     return encodings
     
      
-def block_cell_encoding_efficient(encodings, N):
+def block_cell_encoding_minimal(encodings, N):
     for i in range(0, N, 3):
         for j in range(0, N, 3):
             for d in range(1, 10):
@@ -46,7 +44,7 @@ def block_cell_encoding_efficient(encodings, N):
                             encodings.append([-d_transform, -sudoku_encoding.transform(i+k, j+l, other_d, N)])  
     return encodings
                 
-def filled_in_encoding_efficient(encodings, sudoku, N):
+def filled_in_encoding_minimal(encodings, sudoku, N):
     for i in range(N):
         for j in range(N):
             current_number = sudoku[i][j]
@@ -54,17 +52,17 @@ def filled_in_encoding_efficient(encodings, sudoku, N):
                 encodings.append([sudoku_encoding.transform(i, j, current_number, N)])
     return encodings
     
-def encoding_efficient(sudoku, N):
+def encoding_minimal(sudoku, N):
     encodings = []
-    encodings = ind_cell_encoding_efficient(encodings, N)
-    encodings = row_cell_encoding_efficient(encodings, N)
-    encodings = col_cell_encoding_efficient(encodings, N)
-    encodings = block_cell_encoding_efficient(encodings, N)
-    encodings = filled_in_encoding_efficient(encodings, sudoku, N)
+    encodings = ind_cell_encoding_minimal(encodings, N)
+    encodings = row_cell_encoding_minimal(encodings, N)
+    encodings = col_cell_encoding_minimal(encodings, N)
+    encodings = block_cell_encoding_minimal(encodings, N)
+    encodings = filled_in_encoding_minimal(encodings, sudoku, N)
     return encodings
 
-def solver_efficient(sudoku, N):
-    encodings = encoding_efficient(sudoku, N)
+def solver_minimal(sudoku, N):
+    encodings = encoding(sudoku, N)
     print("Encoding length naive: {0} clauses".format(len(encodings)))
     solved = pycosat.solve(encodings)
     return sudoku_encoding.reverse_encoding(solved, N)

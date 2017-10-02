@@ -2,10 +2,11 @@ import pycosat
 import numpy as np
 import solver_efficient
 import solver_naive
-import solver_pair
 import time
 import sudoku_encoding
 import check_sudoku
+import solver_custom
+import solver_minimal
 
 # Test and time the encodings on a certain difficulty
 def test_sudokus(sudoku_number, N, difficulty):
@@ -26,32 +27,41 @@ def test_sudokus(sudoku_number, N, difficulty):
 	solved_eff = pycosat.solve(eff_encoding)
 	end_eff = time.time()
 
-	# Efficient encoding with recursion
+	# Custom encoding with recursion
 	start_eff_recursive = time.time()
-	eff_encoding_recursive = solver_efficient.encoding_efficient_recursion(sudoku, N)
+	eff_encoding_recursive = solver_custom.encoding_custom_recursion(sudoku, N)
 	solved_eff_recursive = pycosat.solve(eff_encoding_recursive)
 	end_eff_recursive = time.time()
 
-	# Pair encoding
-	start_pair = time.time()
-	pair_encoding = solver_pair.encoding_pair(sudoku, N)
-	solved_pair = pycosat.solve(pair_encoding)
-	end_pair = time.time()
+	# Minimal encoding
+	start_minimal = time.time()
+	minimal_encoding = solver_minimal.encoding_minimal(sudoku, N)
+	solved_minimal = pycosat.solve(minimal_encoding)
+	end_minimal = time.time()
 
+	# Custom encoding
+	start_custom = time.time()
+	custom_encoding = solver_custom.encoding_custom(sudoku, N)
+	solved_custom = pycosat.solve(custom_encoding)
+	end_custom = time.time()
+
+	# Time stamps
 	time_naive = (end_naive - start_naive)
 	time_eff = (end_eff - start_eff)
 	time_eff_recursive = (end_eff_recursive - start_eff_recursive)
-	time_pair = (end_pair - start_pair)
+	time_minimal = (end_minimal - start_minimal)
+	time_custom = (end_custom - start_custom)
 
 	print("Solved correctly naive: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_naive, N), N)))
 	print("Solved correctly efficient: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff, N), N)))
 	print("Solved correctly efficient with recursion: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff_recursive, N), N)))
-	print("Solved correctly pair: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_pair, N), N)))
+	print("Solved correctly minimal: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_minimal, N), N)))
+	print("Solved correctly custom: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_custom, N), N)))
 	print("\n")
 
 	# Time for naive and efficient
 	# time_naive, time_eff = test_current_sudoku(eff_encoding, naive_encoding, sudoku, N)
-	return time_naive, time_eff, time_eff_recursive, time_pair
+	return time_naive, time_eff, time_eff_recursive, time_minimal, time_custom
 
 def test_sudokus_solving_only(sudoku_number, N, difficulty):
 	# Opens file with set difficulty
@@ -72,66 +82,81 @@ def test_sudokus_solving_only(sudoku_number, N, difficulty):
 	end_eff = time.time()
 
 	# Efficient encoding with recursion
-	eff_encoding_recursive = solver_efficient.encoding_efficient_recursion(sudoku, N)
+	eff_encoding_recursive = solver_custom.encoding_custom_recursion(sudoku, N)
 	start_eff_recursive = time.time()
 	solved_eff_recursive = pycosat.solve(eff_encoding_recursive)
 	end_eff_recursive = time.time()
 
-	# Pair encoding
-	pair_encoding = solver_pair.encoding_pair(sudoku, N)
-	start_pair = time.time()
-	solved_pair = pycosat.solve(pair_encoding)
-	end_pair = time.time()
+	# Minimal encoding
+	minimal_encoding = solver_minimal.encoding_minimal(sudoku, N)
+	start_minimal = time.time()
+	solved_minimal = pycosat.solve(minimal_encoding)
+	end_minimal = time.time()
+
+	# Custom encoding
+	custom_encoding = solver_custom.encoding_custom(sudoku, N)
+	start_custom = time.time()
+	solved_custom = pycosat.solve(custom_encoding)
+	end_custom = time.time()
 
 	time_naive = (end_naive - start_naive)
 	time_eff = (end_eff - start_eff)
 	time_eff_recursive = (end_eff_recursive - start_eff_recursive)
-	time_pair = (end_pair - start_pair)
+	time_minimal = (end_minimal - start_minimal)
+	time_custom = (end_custom - start_custom)
 
 	print("Solved correctly naive: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_naive, N), N)))
 	print("Solved correctly efficient: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff, N), N)))
 	print("Solved correctly efficient with recursion: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_eff_recursive, N), N)))
-	print("Solved correctly pair: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_pair, N), N)))
+	print("Solved correctly minimal: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_minimal, N), N)))
+	print("Solved correctly custom: {0}".format(check_sudoku.validate_sudoku(sudoku_encoding.reverse_encoding(solved_custom, N), N)))
+
 	print("\n")
 
 	# Time for naive and efficient
 	# time_naive, time_eff = test_current_sudoku(eff_encoding, naive_encoding, sudoku, N)
-	return time_naive, time_eff, time_eff_recursive, time_pair
+	return time_naive, time_eff, time_eff_recursive, time_minimal, time_custom
  
 def test_encoding(N):
-	easy_time = [0, 0, 0, 0]
-	medium_time = [0, 0, 0, 0]
-	hard_time = [0, 0, 0, 0]
-	insane_time = [0, 0, 0, 0]
+	easy_time = [0, 0, 0, 0, 0]
+	medium_time = [0, 0, 0, 0, 0]
+	hard_time = [0, 0, 0, 0, 0]
+	insane_time = [0, 0, 0, 0, 0]
 
-	for i in range(0, 10):
+	for i in range(0, 1):
 		# easy_time_naive, easy_time_eff, easy_time_eff_recursive, easy_time_pair = test_sudokus(i, N, "Easy")
-		easy_time_naive, easy_time_eff, easy_time_eff_recursive, easy_time_pair = test_sudokus_solving_only(i, N, "Easy")
+		easy_time_naive, easy_time_eff, easy_time_eff_recursive, easy_time_minimal, easy_time_custom = test_sudokus_solving_only(i, N, "Easy")
 		easy_time[0] += easy_time_naive
 		easy_time[1] += easy_time_eff
 		easy_time[2] += easy_time_eff_recursive
-		easy_time[3] += easy_time_pair
+		easy_time[3] += easy_time_minimal
+		easy_time[4] += easy_time_custom
 
 		# medium_time_naive, medium_time_eff, medium_time_eff_recursive, medium_time_pair = test_sudokus(i, N, "Medium")
-		medium_time_naive, medium_time_eff, medium_time_eff_recursive, medium_time_pair = test_sudokus_solving_only(i, N, "Medium")
+		medium_time_naive, medium_time_eff, medium_time_eff_recursive, medium_time_minimal, medium_time_custom = test_sudokus_solving_only(i, N, "Medium")
 		medium_time[0] += medium_time_naive
 		medium_time[1] += medium_time_eff
 		medium_time[2] += medium_time_eff_recursive
-		medium_time[3] += medium_time_pair
+		medium_time[3] += medium_time_minimal
+		medium_time[4] += medium_time_custom
+
 
 		# hard_time_naive, hard_time_eff, hard_time_eff_recursive, hard_time_pair = test_sudokus(i, N, "Hard")
-		hard_time_naive, hard_time_eff, hard_time_eff_recursive, hard_time_pair = test_sudokus_solving_only(i, N, "Hard")
+		hard_time_naive, hard_time_eff, hard_time_eff_recursive, hard_time_minimal, hard_time_custom = test_sudokus_solving_only(i, N, "Hard")
 		hard_time[0] += hard_time_naive
 		hard_time[1] += hard_time_eff
 		hard_time[2] += hard_time_eff_recursive
-		hard_time[3] += hard_time_pair
+		hard_time[3] += hard_time_minimal
+		hard_time[4] += hard_time_custom
 
 		# insane_time_naive, insane_time_eff, insane_time_eff_recursive, insane_time_pair = test_sudokus(i, N, "Insane")
-		insane_time_naive, insane_time_eff, insane_time_eff_recursive, insane_time_pair = test_sudokus_solving_only(i, N, "Insane")
+		insane_time_naive, insane_time_eff, insane_time_eff_recursive, insane_time_minimal, insane_time_custom = test_sudokus_solving_only(i, N, "Insane")
 		insane_time[0] += insane_time_naive
 		insane_time[1] += insane_time_eff
 		insane_time[2] += insane_time_eff_recursive
-		insane_time[3] += insane_time_pair
+		insane_time[3] += insane_time_minimal
+		insane_time[4] += insane_time_custom
+
 
 	print(easy_time)
 	print(medium_time)
